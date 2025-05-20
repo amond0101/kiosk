@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+
+{% block title %}장바구니 - 음식 메뉴판{% endblock %}
+
+{% block extra_styles %}
+.cart-container {
+  max-width: 1000px;
+  margin: 30px auto;
+  background: var(--menu-background);
+  border-radius: var(--button-radius);
+  box-shadow: var(--box-shadow);
+  padding: 30px;
+}
+
+.cart-empty {
+  text-align: center;
+  padding: 50px 0;
+  color: #6c757d;
+}
+
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cart-table th {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
+  color: #495057;
+}
+
+.cart-table td {
+  padding: 15px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.cart-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--button-radius);
+}
+
+.cart-item-name {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.cart-quantity {
+  display: flex;
+  align-items: center;
+}
+
+.quantity-btn {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-input {
+  width: 40px;
+  text-align: center;
+  margin: 0 5px;
+  border: 1px solid #dee2e6;
+  padding: 5px;
+}
+
+.cart-price {
+  font-weight: bold;
+  color: var(--secondary-color);
+}
+
+.cart-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #dee2e6;
+}
+
+.cart-total {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.cart-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: var(--button-radius);
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+  border: none;
+}
+
+.btn-danger {
+  background: var(--secondary-color);
+  color: white;
+  border: none;
+}
+
+.allergy-item {
+  background: rgba(var(--secondary-color-rgb), 0.1);
+  color: var(--secondary-color);
+  padding: 5px 10px;
+  border-radius: 20px;
+  margin-right: 5px;
+  display: inline-block;
+  font-size: 12px;
+}
+
+/* 모바일 화면에서의 스타일 조정 */
+@media (max-width: 768px) {
+  .cart-table th:nth-child(1),
+  .cart-table td:nth-child(1) {
+    display: none; /* 모바일에서 이미지 열 숨김 */
+  }
+  
+  .cart-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .cart-buttons .btn {
+    width: 100%;
+  }
+}
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+  <h1><i class="fa-solid fa-cart-shopping"></i> 장바구니</h1>
+  <div class="button-group">
+    <a href="/" class="btn btn-secondary">
+      <i class="fas fa-arrow-left"></i> 메인으로
+    </a>
+  </div>
+</div>
+
+<div class="cart-container">
+  {% if cart %}
+    <table class="cart-table">
+      <thead>
+        <tr>
+          <th>이미지</th>
+          <th>상품명</th>
+          <th>알러지 정보</th>
+          <th>수량</th>
+          <th>가격</th>
+          <th>합계</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in cart %}
+          <tr class="cart-item" data-id="{{ item.id }}" data-price="{{ item.price }}">
+            <td><img src="{{ item.image_url }}" class="cart-image"></td>
+            <td class="cart-item-name">{{ item.name }}</td>
+            <td>
+              {% if item.allergies %}
+                {% for allergy in item.allergies %}
+                  <span class="allergy-item">{{ allergy }}</span>
+                {% endfor %}
+              {% else %}
+                <span>없음</span>
+              {% endif %}
+            </td>
+            <td>
+              <div class="cart-quantity">
+                <button class="quantity-btn decrease-btn" onclick="updateQuantity({{ item.id }}, -1)">-</button>
+                <input type="number" class="quantity-input" value="{{ item.quantity }}" min="1" onchange="updateQuantityDirect({{ item.id }}, this.value)">
+                <button class="quantity-btn increase-btn" onclick="updateQuantity({{ item.id }}, 1)">+</button>
+              </div>
+            </td>
+            <td class="cart-price">{{ item.price }}원</td>
+            <td class="cart-subtotal">{{ item.price * item.quantity }}원</td>
+            <td>
+              <button class="btn btn-danger" onclick="removeItem({{ item.id }})">삭제</button>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+    <div class="cart-footer">
+      <div class="cart-total">총 합계: <span id="total-price">{{ total_price }}</span>원</div>
+      <div class="cart-buttons">
+        <button class="btn btn-danger" onclick="return clearCart()">장바구니 비우기</button>
+        <a href="/cart/checkout" class="btn btn-primary">주문하기</a>
+      </div>
+    </div>
+  {% else %}
+    <div class="cart-empty">
+      <i class="fa-solid fa-cart-shopping fa-4x" style="color:#dee2e6;margin-bottom:20px;"></i>
+      <h2>장바구니가 비어있습니다.</h2>
+      <p>메뉴를 선택하여 장바구니에 추가해주세요.</p>
+      <a href="/" class="btn btn-primary">메뉴 둘러보기</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // 수량 업데이트 함수
+  function updateQuantity(menuId, change) {
+    var quantityInput = document.querySelector('.cart-item[data-id="' + menuId + '"] .quantity-input');
+    var newQuantity = parseInt(quantityInput.value) + change;
+    
+    if (newQuantity < 1) newQuantity = 1;
+    
+    updateCartItem(menuId, newQuantity);
+  }
+  
+  // 직접 수량 입력 시 업데이트
+  function updateQuantityDirect(menuId, newQuantity) {
+    if (parseInt(newQuantity) < 1) newQuantity = 1;
+    updateCartItem(menuId, parseInt(newQuantity));
+  }
+  
+  // 장바구니 항목 업데이트 API 호출
+  function updateCartItem(menuId, quantity) {
+    fetch('/cart/update/' + menuId, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ quantity: quantity })
+    })
+    .then(function(response) { 
+      return response.json(); 
+    })
+    .then(function(data) {
+      if (data.success) {
+        // 수량 및 소계 업데이트
+        var item = document.querySelector('.cart-item[data-id="' + menuId + '"]');
+        var quantityInput = item.querySelector('.quantity-input');
+        var subtotalEl = item.querySelector('.cart-subtotal');
+        var price = parseInt(item.dataset.price);
+        
+        quantityInput.value = quantity;
+        subtotalEl.textContent = price * quantity + '원';
+        
+        // 총 가격 업데이트
+        document.getElementById('total-price').textContent = data.total_price;
+        
+        // 헤더의 장바구니 카운트 업데이트
+        var cartCountEl = document.getElementById('cart-count');
+        if (cartCountEl) {
+          cartCountEl.textContent = data.cart_count;
+        }
+      }
+    })
+    .catch(error => console.error('장바구니 업데이트 오류:', error));
+  }
+  
+  // 항목 삭제
+  function removeItem(menuId) {
+    if (!confirm('이 항목을 삭제하시겠습니까?')) {
+      return;
+    }
+    
+    updateCartItem(menuId, 0);
+    
+    // 아이템 제거
+    var item = document.querySelector('.cart-item[data-id="' + menuId + '"]');
+    item.style.transition = 'opacity 0.5s';
+    item.style.opacity = '0';
+    
+    // 애니메이션 후 제거
+    setTimeout(function() {
+      item.remove();
+      
+      // 장바구니가 비었는지 확인
+      if (document.querySelectorAll('.cart-item').length === 0) {
+        location.reload(); // 페이지 새로고침하여 빈 장바구니 표시
+      }
+    }, 500);
+  }
+  
+  // 장바구니 비우기
+  function clearCart() {
+    if (!confirm('장바구니를 비우시겠습니까?')) {
+      return false;
+    }
+    
+    fetch('/cart/clear', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        location.reload(); // 페이지 새로고침
+      } else {
+        alert('장바구니를 비우는 중 오류가 발생했습니다.');
+      }
+    })
+    .catch(error => {
+      console.error('오류 발생:', error);
+      // 오류 발생 시 폼 방식으로 시도
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/cart/clear';
+      document.body.appendChild(form);
+      form.submit();
+    });
+    
+    return false;
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}음식 메뉴판{% endblock %}</title>
+  
+  <!-- 기본 폰트 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-p6N4XxG0nq7rzV3sLQk3YHa0OihUwKqxpMVDk3XjKq+oR3qTsAd/4kXq5YF6H6+7z5bYmZx7qt9XjWmQJb4geg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <style>
+    :root {
+      {{ '' | to_css }}
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font-family);
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    /* 애니메이션 정의 */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    /* 페이지 타이틀 */
+    .page-title {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--box-shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      animation: slideInLeft var(--animation-speed);
+    }
+    
+    .page-title h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .page-title h1 i {
+      font-size: 1.5rem;
+    }
+    
+    /* 컨테이너 */
+    .container {
+      display: flex;
+      min-height: calc(100vh - 70px);
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 15px;
+      animation: fadeIn var(--animation-speed);
+    }
+    
+    /* 메인 컨텐츠 */
+    .main-content {
+      flex: 1;
+      padding: 20px;
+    }
+    
+    /* 메뉴 그리드 */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+    }
+    
+    /* 메뉴 아이템 */
+    .menu-item {
+      background: var(--menu-background);
+      border-radius: var(--button-radius);
+      overflow: hidden;
+      box-shadow: var(--box-shadow);
+      transition: all var(--animation-speed);
+      position: relative;
+      animation: slideUp var(--animation-speed);
+    }
+    
+    .menu-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+    
+    /* 버튼 기본 스타일 */
+    .btn {
+      padding: 10px 20px;
+      border-radius: var(--button-radius);
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all var(--animation-speed);
+      border: none;
+    }
+    
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+    }
+    
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+    
+    .btn-danger {
+      background: var(--secondary-color);
+      color: white;
+    }
+    
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+    
+    /* 메뉴 가격 스타일 */
+    .menu-price {
+      color: var(--secondary-color);
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    
+    /* 알림 메시지 스타일 */
+    .flash-messages {
+      margin-bottom: 20px;
+    }
+    
+    .flash-message {
+      padding: 15px 20px;
+      border-radius: var(--button-radius);
+      margin-bottom: 10px;
+      position: relative;
+      animation: slideInLeft var(--animation-speed);
+    }
+    
+    .flash-success {
+      background-color: rgba(40, 167, 69, 0.1);
+      color: #155724;
+      border-left: 4px solid #28a745;
+    }
+    
+    .flash-danger {
+      background-color: rgba(220, 53, 69, 0.1);
+      color: #721c24;
+      border-left: 4px solid #dc3545;
+    }
+    
+    .flash-warning {
+      background-color: rgba(255, 193, 7, 0.1);
+      color: #856404;
+      border-left: 4px solid #ffc107;
+    }
+    
+    /* 버튼 그룹 */
+    .button-group {
+      display: flex;
+      gap: 10px;
+      animation: slideInRight var(--animation-speed);
+    }
+    
+    /* 추가 스타일은 페이지별로 적용 */
+    {% block extra_styles %}{% endblock %}
+  </style>
+</head>
+<body>
+  {% block content %}{% endblock %}
+  
+  {% block scripts %}{% endblock %}
+  
+  <!-- 공통 스크립트 -->
+  <script>
+    // URL에서 refresh 파라미터 확인하여 페이지 새로고침
+    document.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('refresh') === 'true') {
+        // 페이지 새로고침하되 refresh 파라미터 제거
+        const newUrl = window.location.pathname + 
+                       window.location.search.replace(/[?&]refresh=true/, '');
+        window.history.replaceState({}, document.title, newUrl);
+        window.location.reload(true); // true는 캐시 무시하고 새로고침
+      }
+      
+      // 애니메이션 지연 효과 (메뉴 아이템)
+      const menuItems = document.querySelectorAll('.menu-item');
+      menuItems.forEach((item, index) => {
+        item.style.animationDelay = (0.05 * index) + 's';
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,457 @@
+{% extends "base.html" %}
+
+{% block title %}{{ menu_item.name }} - 상세정보{% endblock %}
+
+{% block extra_styles %}
+.detail-container {
+  max-width: 800px;
+  margin: 30px auto;
+  background: var(--menu-background);
+  border-radius: var(--button-radius);
+  box-shadow: var(--box-shadow);
+  overflow: hidden;
+}
+
+.menu-image {
+  height: 300px;
+  background-position: center;
+  background-size: cover;
+}
+
+.menu-content {
+  padding: 30px;
+}
+
+.menu-name {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.menu-price {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--secondary-color);
+  margin-bottom: 20px;
+}
+
+.menu-description {
+  font-size: 16px;
+  color: #495057;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.allergy-section {
+  margin-top: 20px;
+  border-top: 1px solid #e9ecef;
+  padding-top: 20px;
+}
+
+.allergy-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #343a40;
+  margin-bottom: 15px;
+}
+
+.allergy-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.allergy-item {
+  background: rgba(var(--secondary-color-rgb), 0.1);
+  color: var(--secondary-color);
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+.back-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #6c757d;
+  color: white;
+  text-decoration: none;
+  border-radius: var(--button-radius);
+  font-weight: bold;
+}
+
+.back-button:hover {
+  background: #5a6268;
+}
+
+.remove-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: var(--button-radius);
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: auto;
+}
+
+.remove-button:hover {
+  opacity: 0.9;
+}
+
+.cart-section {
+  margin: 25px 0;
+  padding: 20px 0;
+  border-top: 1px solid #e9ecef;
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.quantity-label {
+  font-weight: bold;
+  margin-right: 15px;
+}
+
+.quantity-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #ddd;
+  background: #f8f9fa;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-input {
+  width: 50px;
+  height: 36px;
+  border: 1px solid #ddd;
+  text-align: center;
+  font-size: 16px;
+  margin: 0 5px;
+}
+
+.add-to-cart-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: var(--button-radius);
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.add-to-cart-btn:hover {
+  opacity: 0.9;
+}
+
+/* 모달 스타일 */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: var(--menu-background);
+  padding: 30px;
+  border-radius: var(--button-radius);
+  box-shadow: var(--box-shadow);
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+}
+
+.modal-body {
+  margin-bottom: 20px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.close-modal {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #adb5bd;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #495057;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: var(--button-radius);
+}
+
+.btn-confirm {
+  padding: 10px 20px;
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: var(--button-radius);
+  cursor: pointer;
+}
+
+.btn-cancel {
+  padding: 10px 20px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: var(--button-radius);
+  cursor: pointer;
+}
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+  <h1><i class="fas fa-utensils"></i> 메뉴 상세정보</h1>
+  <div class="button-group">
+    <a href="/" class="btn btn-secondary">
+      <i class="fas fa-arrow-left"></i> 메인으로
+    </a>
+  </div>
+</div>
+
+<div class="detail-container">
+  <div class="menu-image" style="background-image:url('{{menu_item.image_url}}')"></div>
+  <div class="menu-content">
+    <div class="menu-name">{{menu_item.name}}</div>
+    <div class="menu-price">{{menu_item.price|number_format}}원</div>
+    <div class="menu-description">{{menu_item.description}}</div>
+    
+    <div class="allergy-section">
+      <div class="allergy-title">알레르기 정보</div>
+      <div class="allergy-list">
+        {% if menu_item.allergies %}
+          {% for a in menu_item.allergies %}
+            <div class="allergy-item">{{a}}</div>
+          {% endfor %}
+        {% else %}
+          <p>알레르기 유발 성분이 없습니다.</p>
+        {% endif %}
+      </div>
+    </div>
+    
+    <!-- 수량 및 장바구니 기능 -->
+    <div class="cart-section">
+      <div class="quantity-control">
+        <span class="quantity-label">수량:</span>
+        <button type="button" id="decrease-btn" class="quantity-btn">-</button>
+        <input type="number" id="quantity" class="quantity-input" value="1" min="1" max="10">
+        <button type="button" id="increase-btn" class="quantity-btn">+</button>
+      </div>
+      <button type="button" class="add-to-cart-btn" id="add-to-cart-btn">
+        <i class="fa-solid fa-cart-plus"></i> 장바구니에 담기
+      </button>
+    </div>
+    
+    <!-- 버튼 그룹 -->
+    <div class="button-group">
+      <a href="{{url_for('index')}}" class="back-button">뒤로 가기</a>
+      <button class="remove-button" id="remove-btn">음식 제거</button>
+    </div>
+  </div>
+</div>
+
+<!-- 음식 제거 모달 -->
+<div class="modal" id="remove-modal">
+  <div class="modal-content">
+    <span class="close-modal" id="close-modal">&times;</span>
+    <div class="modal-title">음식 제거 확인</div>
+    <div class="modal-body">
+      <p>"{{menu_item.name}}"을(를) 정말 삭제하시겠습니까?</p>
+      <div class="form-group">
+        <label for="admin-password">관리자 비밀번호:</label>
+        <input type="password" id="admin-password">
+      </div>
+      <div id="error-message" style="color: red; display: none;">
+        비밀번호가 틀렸습니다. 남은 시도 횟수: <span id="attempts-left">5</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" id="cancel-remove">취소</button>
+      <button class="btn-confirm" id="confirm-remove">제거하기</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 수량 조절
+    const quantityInput = document.getElementById('quantity');
+    const decreaseBtn = document.getElementById('decrease-btn');
+    const increaseBtn = document.getElementById('increase-btn');
+    const addToCartBtn = document.getElementById('add-to-cart-btn');
+    
+    // 수량 감소 버튼
+    decreaseBtn.addEventListener('click', function() {
+      let value = parseInt(quantityInput.value);
+      if (value > 1) {
+        quantityInput.value = value - 1;
+      }
+    });
+    
+    // 수량 증가 버튼
+    increaseBtn.addEventListener('click', function() {
+      let value = parseInt(quantityInput.value);
+      if (value < 10) {
+        quantityInput.value = value + 1;
+      }
+    });
+    
+    // 수량 직접 입력 시 유효성 검사
+    quantityInput.addEventListener('change', function() {
+      let value = parseInt(this.value);
+      if (isNaN(value) || value < 1) {
+        this.value = 1;
+      } else if (value > 10) {
+        this.value = 10;
+      }
+    });
+    
+    // 장바구니 담기 버튼
+    addToCartBtn.addEventListener('click', function() {
+      const menuId = '{{ menu_item.id }}';
+      const quantity = parseInt(quantityInput.value);
+      
+      fetch('/cart/add/' + menuId, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ quantity: quantity })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('장바구니에 추가되었습니다!');
+          
+          // 장바구니 카운트 업데이트
+          const cartCountEl = document.getElementById('cart-count');
+          if (cartCountEl) {
+            cartCountEl.textContent = data.cart_count;
+          }
+        }
+      })
+      .catch(error => {
+        console.error('장바구니 추가 오류:', error);
+      });
+    });
+    
+    // 음식 제거 버튼
+    const removeBtn = document.getElementById('remove-btn');
+    const removeModal = document.getElementById('remove-modal');
+    const closeModal = document.getElementById('close-modal');
+    const cancelRemove = document.getElementById('cancel-remove');
+    const confirmRemove = document.getElementById('confirm-remove');
+    const adminPassword = document.getElementById('admin-password');
+    const errorMessage = document.getElementById('error-message');
+    const attemptsLeft = document.getElementById('attempts-left');
+    
+    let passwordAttempts = 5;
+    
+    removeBtn.addEventListener('click', function() {
+      removeModal.style.display = 'flex';
+    });
+    
+    closeModal.addEventListener('click', function() {
+      removeModal.style.display = 'none';
+    });
+    
+    cancelRemove.addEventListener('click', function() {
+      removeModal.style.display = 'none';
+    });
+    
+    confirmRemove.addEventListener('click', function() {
+      const password = adminPassword.value;
+      
+      fetch('/remove-food/{{ menu_item.id }}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ admin_password: password })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('음식이 성공적으로 제거되었습니다.');
+          window.location.href = '/';
+        } else {
+          passwordAttempts--;
+          errorMessage.style.display = 'block';
+          attemptsLeft.textContent = passwordAttempts;
+          
+          if (passwordAttempts <= 0) {
+            alert('비밀번호를 5회 이상 틀렸습니다. 페이지를 새로고침합니다.');
+            window.location.reload();
+          }
+        }
+      })
+      .catch(error => {
+        console.error('음식 제거 오류:', error);
+      });
+    });
+    
+    // 모달 외부 클릭 시 닫기
+    window.addEventListener('click', function(event) {
+      if (event.target === removeModal) {
+        removeModal.style.display = 'none';
+      }
+    });
+  });
+</script>
+{% endblock %}

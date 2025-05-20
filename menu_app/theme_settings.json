@@ -1,0 +1,12 @@
+{
+  "name": "컬러풀 테마",
+  "primary_color": "#6610f2",
+  "secondary_color": "#e83e8c",
+  "background_color": "#f0f8ff",
+  "menu_background": "#ffffff",
+  "text_color": "#333333",
+  "button_radius": "15px",
+  "font_family": "'Nanum Gothic', Arial, sans-serif",
+  "box_shadow": "0 5px 15px rgba(0,0,0,0.1)",
+  "animation_speed": "0.4s"
+}

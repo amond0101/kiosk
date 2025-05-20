@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}음식 추가 - 메뉴판{% endblock %}
+
+{% block extra_styles %}
+/* 음식 추가 페이지 스타일 */
+.form-container {
+  max-width: 700px;
+  margin: 30px auto;
+  background: var(--menu-background);
+  border-radius: var(--button-radius);
+  box-shadow: var(--box-shadow);
+  padding: 30px;
+}
+
+.page-subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.form-title {
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #333;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: var(--button-radius);
+  font-family: var(--font-family);
+  font-size: 16px;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+textarea.form-control {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-group small {
+  display: block;
+  margin-top: 5px;
+  color: #6c757d;
+}
+
+.allergy-selection {
+  margin-bottom: 20px;
+}
+
+.allergy-selection-label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #333;
+}
+
+.allergy-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.allergy-button {
+  position: relative;
+}
+
+.allergy-button input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+}
+
+.allergy-button label {
+  display: inline-block;
+  padding: 8px 15px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: var(--button-radius);
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.allergy-button input[type="checkbox"]:checked + label {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  color: white;
+}
+
+.allergy-help {
+  font-size: 14px;
+  color: #6c757d;
+  margin-top: 10px;
+}
+
+.file-upload {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.file-upload input[type="file"] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.file-upload-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  background: var(--primary-color);
+  color: white;
+  border-radius: var(--button-radius);
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.file-upload-btn:hover {
+  background: var(--secondary-color);
+}
+
+.file-name {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #6c757d;
+  text-align: center;
+}
+
+.buttons-container {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.back-button {
+  flex: 1;
+  display: inline-block;
+  padding: 12px;
+  background: #6c757d;
+  color: white;
+  text-align: center;
+  border-radius: var(--button-radius);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.submit-button {
+  flex: 2;
+  padding: 12px;
+  background: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: var(--button-radius);
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.back-button:hover, .submit-button:hover {
+  opacity: 0.9;
+}
+
+.password-section {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+  <h1><i class="fas fa-plus-circle"></i> 음식 추가</h1>
+  <div class="button-group">
+    <a href="/" class="btn btn-secondary">
+      <i class="fas fa-arrow-left"></i> 메인으로
+    </a>
+  </div>
+</div>
+
+<div class="form-container">
+  <h2 class="form-title">새 메뉴 추가</h2>
+  <p class="page-subtitle">신메뉴를 등록해보세요.</p>
+  
+  {% with messages=get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for cat, msg in messages %}
+          <div class="flash-message flash-{{ cat }}">{{ msg }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  
+  <form method="post" enctype="multipart/form-data">
+    <div class="password-section">
+      <div class="form-group">
+        <label for="admin_password">관리자 비밀번호</label>
+        <input type="password" class="form-control" name="admin_password" id="admin_password" required>
+        <small>메뉴 추가를 위해 관리자 인증이 필요합니다.</small>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="name">음식 이름</label>
+      <input type="text" class="form-control" name="name" id="name" required placeholder="예: 불고기 비빔밥">
+    </div>
+    
+    <div class="form-group">
+      <label for="price">가격 (원)</label>
+      <input type="number" class="form-control" name="price" id="price" required placeholder="예: 9000">
+    </div>
+    
+    <div class="form-group">
+      <label for="description">설명</label>
+      <textarea class="form-control" name="description" id="description" rows="3" required placeholder="음식에 대한 간단한 설명을 작성하세요."></textarea>
+    </div>
+    
+    <div class="allergy-selection">
+      <span class="allergy-selection-label">알러지 정보</span>
+      <div class="allergy-buttons">
+        {% for a in allergies %}
+          <div class="allergy-button">
+            <input type="checkbox" id="allergy-{{ loop.index }}" name="allergies" value="{{a}}">
+            <label for="allergy-{{ loop.index }}">{{a}}</label>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="allergy-help">
+        <i class="fas fa-info-circle"></i> 해당되는 알러지를 모두 선택하세요.
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label>이미지 업로드</label>
+      <div class="file-upload">
+        <input type="file" name="image" accept="image/*" id="image-upload" onchange="updateFileName()">
+        <div class="file-upload-btn">
+          <i class="fas fa-upload"></i> 이미지 파일 선택
+        </div>
+        <div class="file-name" id="file-name">선택된 파일 없음</div>
+      </div>
+    </div>
+    
+    <div class="buttons-container">
+      <a href="/" class="back-button">
+        <i class="fas fa-times"></i> 취소
+      </a>
+      <button type="submit" class="submit-button">
+        <i class="fas fa-plus-circle"></i> 음식 추가하기
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // 파일 이름 표시 업데이트
+  function updateFileName() {
+    const input = document.getElementById('image-upload');
+    const fileNameDisplay = document.getElementById('file-name');
+    
+    if (input.files && input.files[0]) {
+      fileNameDisplay.textContent = input.files[0].name;
+      fileNameDisplay.style.color = "#28a745";
+    } else {
+      fileNameDisplay.textContent = '선택된 파일 없음';
+      fileNameDisplay.style.color = "#6c757d";
+    }
+  }
+</script>
+{% endblock %}

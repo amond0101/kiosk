@@ -1,0 +1,403 @@
+{% extends "base.html" %}
+
+{% block title %}음식 메뉴판{% endblock %}
+
+{% block extra_styles %}
+.sidebar {
+  width: 250px;
+  background: var(--menu-background);
+  padding: 20px;
+  margin-right: 20px;
+  margin-top: 20px;
+  border-radius: var(--button-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.category-title {
+  font-weight: bold;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  color: var(--primary-color);
+}
+
+.allergy-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.allergy-item {
+  margin-bottom: 8px;
+}
+
+.allergy-item.active {
+  background-color: #f8f9fa;
+  border-radius: var(--button-radius);
+}
+
+.allergy-checkbox {
+  display: block;
+  position: relative;
+}
+
+.allergy-checkbox input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+}
+
+.allergy-checkbox label {
+  display: block;
+  padding: 8px 15px;
+  color: #333; /* 고대비 색상으로 수정 */
+  cursor: pointer;
+  border-radius: var(--button-radius);
+  transition: all var(--animation-speed);
+  padding-left: 35px;
+}
+
+.allergy-checkbox label:before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border: 1px solid #ced4da;
+  border-radius: 3px;
+  background: #fff;
+}
+
+.allergy-checkbox input[type="checkbox"]:checked + label {
+  background-color: rgba(var(--secondary-color-rgb), 0.1);
+  color: #333; /* 고대비 색상으로 수정 */
+  font-weight: bold;
+}
+
+.allergy-checkbox input[type="checkbox"]:checked + label:before {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.allergy-checkbox input[type="checkbox"]:checked + label:after {
+  content: '\2714';
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  font-size: 12px;
+}
+
+.filter-notice-enhanced {
+  margin-top: 20px;
+  padding: 10px 15px;
+  background-color: rgba(var(--secondary-color-rgb), 0.1);
+  border-radius: var(--button-radius);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filter-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333; /* 고대비 색상으로 수정 */
+}
+
+.clear-filter-enhanced {
+  background-color: var(--secondary-color);
+  color: white;
+  padding: 5px 10px;
+  border-radius: var(--button-radius);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.cart-button {
+  padding: 8px 15px;
+  background: var(--secondary-color);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--button-radius);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cart-count {
+  background: white;
+  color: var(--secondary-color);
+  border-radius: 50%;
+  min-width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.menu-grid a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.menu-item {
+  background: var(--menu-background);
+  border-radius: var(--button-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+  transition: all var(--animation-speed);
+}
+
+.menu-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.menu-image {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+}
+
+.menu-content {
+  padding: 15px;
+}
+
+.menu-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-bottom: 5px;
+}
+
+.menu-price {
+  color: var(--secondary-color);
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.menu-description {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+.allergy-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.allergy-tag {
+  background-color: rgba(var(--secondary-color-rgb), 0.1);
+  color: var(--secondary-color);
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.view-details {
+  text-align: center;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: var(--button-radius);
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.view-details:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.add-button {
+  padding: 8px 15px;
+  background: #28a745;
+  color: white;
+  text-decoration: none;
+  border-radius: var(--button-radius);
+  font-size: 14px;
+}
+
+.change-button {
+  padding: 8px 15px;
+  background: #6c757d;
+  color: white;
+  text-decoration: none;
+  border-radius: var(--button-radius);
+  font-size: 14px;
+}
+
+.theme-button {
+  padding: 8px 15px;
+  background: var(--primary-color);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--button-radius);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.no-menu {
+  font-size: 18px;
+  color: #6c757d;
+  text-align: center;
+  margin-top: 50px;
+  padding: 20px;
+  background: var(--menu-background);
+  border-radius: var(--button-radius);
+  box-shadow: var(--box-shadow);
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: auto;
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+  
+  .button-group {
+    flex-wrap: wrap;
+  }
+}
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+  <h1><i class="fa-solid fa-utensils"></i> 음식 메뉴판</h1>
+  <div class="button-group">
+    <a href="/cart" class="cart-button">
+      <i class="fa-solid fa-cart-shopping"></i> 장바구니
+      <span class="cart-count" id="cart-count">0</span>
+    </a>
+    <a href="/add" class="add-button">
+      <i class="fas fa-plus"></i> 음식 추가
+    </a>
+    <a href="/change-password" class="change-button">
+      <i class="fas fa-lock"></i> 비밀번호 변경
+    </a>
+    <a href="/theme" class="theme-button">
+      <i class="fas fa-palette"></i> 테마 설정
+    </a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="sidebar">
+    <div class="category-title">알러지 카테고리</div>
+    
+    <!-- 알러지 필터 폼 추가 -->
+    <form action="/" method="get" id="allergy-filter-form">
+      <ul class="allergy-list">
+        {% for allergy in allergies %}
+          <li class="allergy-item{% if allergy in selected_allergies %} active{% endif %}">
+            <div class="allergy-checkbox">
+              <input type="checkbox" 
+                    id="allergy-{{ loop.index }}" 
+                    name="allergy" 
+                    value="{{ allergy }}"
+                    {% if allergy in selected_allergies %}checked{% endif %}
+                    onchange="this.form.submit()">
+              <label for="allergy-{{ loop.index }}">{{ allergy }}</label>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+      
+      {% if selected_allergies %}
+        <div class="filter-notice-enhanced">
+          <span class="filter-label">
+            {% if selected_allergies|length > 1 %}
+              {{ selected_allergies|length }}개 항목 제외
+            {% else %}
+              "{{ selected_allergies[0] }}" 제외
+            {% endif %}
+          </span>
+          <a href="/" class="clear-filter-enhanced">초기화</a>
+        </div>
+      {% endif %}
+    </form>
+  </div>
+
+  <div class="main-content">
+    {% if menu_items %}
+      <div class="menu-grid">
+        {% for item in menu_items %}
+          <a href="{{ url_for('menu_detail', menu_id=item.id) }}">
+            <div class="menu-item">
+              <div class="menu-image" style="background-image:url('{{item.image_url}}')"></div>
+              <div class="menu-content">
+                <div class="menu-name">{{item.name}}</div>
+                <div class="menu-price">{{item.price|number_format}}원</div>
+                <div class="menu-description">{{item.description}}</div>
+                
+                <!-- 알러지 태그 표시 -->
+                {% if item.allergies %}
+                <div class="allergy-tags">
+                  {% for allergy in item.allergies %}
+                  <span class="allergy-tag">{{ allergy }}</span>
+                  {% endfor %}
+                </div>
+                {% endif %}
+                
+                <div class="view-details">상세정보 보기</div>
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="no-menu">
+        {% if selected_allergies %}
+          선택한 알러지가 없는 메뉴가 없습니다.
+        {% else %}
+          메뉴가 없습니다.
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // 페이지 로드 시 장바구니 개수 가져오기
+  document.addEventListener('DOMContentLoaded', function() {
+    fetch('/cart/count')
+      .then(response => response.json())
+      .then(data => {
+        if(data.success) {
+          document.getElementById('cart-count').textContent = data.count;
+        }
+      })
+      .catch(error => console.error('장바구니 카운트 로드 오류:', error));
+  });
+</script>
+{% endblock %}
